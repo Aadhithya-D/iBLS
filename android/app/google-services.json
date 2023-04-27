@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "54634016631",
+    "project_id": "ibls-1",
+    "storage_bucket": "ibls-1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:54634016631:android:9d0e7bd24aab7961873b72",
+        "android_client_info": {
+          "package_name": "com.example.ibls"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "54634016631-e06216ndusjd1qamt7lmacs6u5k04iii.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuvbimc_amv_86KH5Ms5xnPxY0opK1jRE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "54634016631-e06216ndusjd1qamt7lmacs6u5k04iii.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
