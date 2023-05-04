@@ -1,12 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ibls/variables.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileScreen extends StatelessWidget {
    ProfileScreen({super.key});
 
   final double coverHeight = 200;
   final double photoHeight = 150;
+   final supabase = Supabase.instance.client;
   
 
   TextStyle profileFont(BuildContext context){
@@ -64,8 +66,10 @@ Widget top_part(BuildContext context)
   @override
   Widget build(BuildContext context) {
 
-    void signUserOut(){
-      FirebaseAuth.instance.signOut();
+    Future<void> signUserOut() async {
+
+      await supabase.auth.signOut();
+
       Navigator.pop(context);
     }
 

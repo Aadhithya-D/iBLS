@@ -1,9 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ibls/components/my_button.dart';
 import 'package:ibls/components/my_textfield.dart';
 import 'package:flutter/material.dart';
-
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
@@ -20,22 +20,37 @@ class _RegisterPageState extends State<RegisterPage> {
   final aadharController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  final db = FirebaseFirestore.instance;
+  // final db = FirebaseFirestore.instance;
+  final supabase = Supabase.instance.client;
+  // RegExp r = RegExp(r'^\d{4}\s\d{4}\s\d{4}$');
+  RegExp r = RegExp(r'^\d{4}\d{4}\d{4}$');
 
-  void wrongInfo(String error){
-    showDialog(context: context, builder: (context){
-      return AlertDialog(
-        title: const Text("iBLS", style: TextStyle(color: Color(0xFFEEEEEE)),),
-        content: Text(error, style: const TextStyle(color: Color(0xFFEEEEEE)),),
-        backgroundColor: const Color(0xFF393E46),
-        titlePadding: const EdgeInsets.all(20),
-        actions: [
-          TextButton(onPressed: (){
-            Navigator.of(context).pop();
-          }, child: const Text("Ok", style: TextStyle(color: Color(0xFFEEEEEE))))
-        ],
-      );
-    });
+  void wrongInfo(String error) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              "iBLS",
+              style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+            ),
+            content: Text(
+              error,
+              style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            titlePadding: const EdgeInsets.all(20),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("Ok",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.tertiary)))
+            ],
+          );
+        });
   }
 
   void signUserUp() async {
@@ -52,64 +67,60 @@ class _RegisterPageState extends State<RegisterPage> {
       },
     );
 
-
-      if (passwordController.text == confirmPasswordController.text) {
-        if (aadharController.text[0] != "0" && aadharController.text[0] != "1" && aadharController.text.length == 12) {
-          var diff = 0;
-          final docRef = db.collection("AadharData").doc(aadharController.text);
-          docRef.get().then((DocumentSnapshot doc) async {
-            final data = doc.data() as Map<String, dynamic>;
-            print(data["DOB"].runtimeType.toString());
-            DateTime dob = (data["DOB"] as Timestamp).toDate();
-            DateTime now = DateTime.now();
-            diff = (now
-                .difference(dob)
-                .inDays/ 365).round();
-            print(diff);
-            if (diff >= 18) {
-              try {
-                await FirebaseAuth.instance
-                    .createUserWithEmailAndPassword(
-                  email: emailController.text,
-                  password: passwordController.text,
-                )
-                    .then((value) =>
-                {
-                  FirebaseFirestore.instance
-                      .collection("UserData")
-                      .doc(value.user?.uid)
-                      .set({
-                    "name": nameController.text,
-                    "email": value.user?.email,
-                    "aadhar_number": aadharController.text
-                  })
+    if (passwordController.text == confirmPasswordController.text) {
+      if (r.hasMatch(aadharController.text)) {
+        var diff = 0;
+        var data = await supabase
+            .from("AadhaarData")
+            .select()
+            .eq("aadhar_number", aadharController.text)
+            .then((value) async {
+          print(value);
+          String dateString = value[0]["DOB"];
+          DateTime dob = DateTime.parse(dateString);
+          DateTime now = DateTime.now();
+          diff = (now.difference(dob).inDays / 365).round();
+          print(diff);
+          if (diff >= 18) {
+            try {
+              final AuthResponse res = await supabase.auth
+                  .signUp(
+                email: emailController.text,
+                password: passwordController.text,
+              )
+                  .then((value) async {
+                var uid = value.user?.id;
+                Navigator.pop(context);
+                await supabase.from("UserData").insert({
+                  "user_id": uid.toString(),
+                  "name": nameController.text,
+                  "email": emailController.text,
+                  "aadhaar_number": aadharController.text,
+                  "age": diff
                 });
-                Navigator.pop(context);
-              }
-              on FirebaseAuthException catch (e) {
-                Navigator.pop(context);
-                wrongInfo(e.message.toString());
-              }
-            }
-            else{
-              Navigator.pop(context);
-              wrongInfo("You are not eligible to drive");
-            }
-          },
-              onError: (e) {
-                Navigator.pop(context);
-                wrongInfo("User aadhar details not available");
+                return value;
               });
-        }
-        else{
+              Navigator.pop(context);
+            } on AuthException catch (e) {
+              Navigator.pop(context);
+              wrongInfo(e.message.toString());
+            }
+          } else {
+            Navigator.pop(context);
+            wrongInfo("You are not eligible to drive");
+          }
+        }, onError: (e) {
           Navigator.pop(context);
-          wrongInfo("Invalid Aadhar Number");
-        }
+          wrongInfo("User aadhar details not available");
+        });
       } else {
         Navigator.pop(context);
-        wrongInfo("Passwords don't match!");
+        wrongInfo("Invalid Aadhar Number");
       }
-
+    } else {
+      Navigator.pop(context);
+      wrongInfo("Passwords don't match!");
+    }
   }
 
   @override
@@ -129,7 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                   Icon(
+                  Icon(
                     Icons.lock,
                     color: Theme.of(context).colorScheme.tertiary,
                     size: 70,
@@ -137,7 +148,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                   const SizedBox(height: 25),
 
-                   Text(
+                  Text(
                     'Let\'s create an account for you!',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.tertiary,
@@ -211,7 +222,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     children: [
                       Text(
                         'Already have an account?',
-                        style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.tertiary),
                       ),
                       const SizedBox(width: 4),
                       GestureDetector(

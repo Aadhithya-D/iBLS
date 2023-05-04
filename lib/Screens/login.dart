@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ibls/components/my_button.dart';
 import 'package:ibls/components/my_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
@@ -12,6 +13,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final supabase = Supabase.instance.client;
   // text editing controllers
   final emailController = TextEditingController();
 
@@ -46,18 +48,22 @@ class _LoginPageState extends State<LoginPage> {
           );
         });
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text);
+      // await FirebaseAuth.instance.signInWithEmailAndPassword(
+      //     email: emailController.text, password: passwordController.text);
+      final AuthResponse res = await supabase.auth.signInWithPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
       Navigator.pop(context);
     }
-    on FirebaseAuthException catch(e){
+    catch(e){
       Navigator.pop(context);
-      if(e.code == "user-not-found"){
-        wrongInfo(e.message.toString());
-      }
-      else if(e.code == "wrong-password"){
-        wrongInfo(e.message.toString());
-      }
+      // if(e.code == "user-not-found"){
+      //   wrongInfo(e.message.toString());
+      // }
+      // else if(e.code == "wrong-password"){
+      //   wrongInfo(e.message.toString());
+      // }
     }
   }
 
