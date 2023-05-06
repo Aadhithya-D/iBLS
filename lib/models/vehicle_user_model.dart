@@ -1,4 +1,4 @@
-class UserVehicleModel {
+class VehicleUserModel {
   String vehicleNumber;
   String ownerUID;
   String ownerName;
@@ -7,24 +7,24 @@ class UserVehicleModel {
   DateTime? validity;
   String rowID;
 
-  UserVehicleModel(
+  VehicleUserModel(
       {required this.vehicleNumber,
-      required this.ownerUID,
-      required this.ownerName,
-      required this.userUID,
-      required this.userName,
-      required this.validity,
-      required this.rowID});
+        required this.ownerUID,
+        required this.ownerName,
+        required this.userUID,
+        required this.userName,
+        required this.validity,
+        required this.rowID});
 
-  static UserVehicleModel fromMapToObj(Map<String, dynamic> data) {
-    UserVehicleModel obj = UserVehicleModel(
+  static VehicleUserModel fromMapToObj(Map<String, dynamic> data) {
+    VehicleUserModel obj = VehicleUserModel(
         vehicleNumber: data["vehicle_number"],
         ownerUID: data["owner_uid"],
         ownerName: data["owner_name"],
         userUID: data["user_uid"],
         userName: data["user_name"],
         validity: data["validity"],
-      rowID: data["row_id"]
+        rowID: data["row_id"]
     );
     return obj;
   }

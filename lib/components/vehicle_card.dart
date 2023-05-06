@@ -18,8 +18,6 @@ class VehicleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // padding: const EdgeInsets.fromLTRB(0,10,0,10),
-      //   height: 100,
         width: double.maxFinite,
         decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(20,)),
@@ -38,7 +36,7 @@ class VehicleCard extends StatelessWidget {
                 Row(
                   children: [
                     Text("Number of users: $noOfUsers",style: cardFont2(context)),
-                    SizedBox(width: 30,),
+                    const SizedBox(width: 30,),
                     badge(requests,requestNum,context),
                   ],
                 ),
@@ -47,8 +45,6 @@ class VehicleCard extends StatelessWidget {
           ],
         ),
       );
-
-    
   }
  
 }

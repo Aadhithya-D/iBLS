@@ -119,26 +119,36 @@ class RegisterNewVehicleScreen extends StatelessWidget {
                       largeGap(),
                       GestureDetector(
                         onTap: (() async {
+                          FocusScopeNode currentFocus = FocusScope.of(context);
+                          if (!currentFocus.hasPrimaryFocus) {
+                            currentFocus.unfocus();
+                          }
                           //code to register new vehicle
                           var vhNum = vehicleNumberController.text;
                           if (regExVhNum.hasMatch(vhNum)) {
-                            await supabase.from("VehicleData").insert({
-                              "vehicle_number": vhNum,
-                              "owner_uid": iblsController.userID.value,
-                              "owner_name": iblsController.userName.value,
-                              "user_uid": iblsController.userID.value,
-                              "user_name": iblsController.userName.value,
-                              "validity": null
-                            });
-                            await supabase.from("SearchData").insert({
-                              "vehicle_number": vhNum,
-                              "owner_uid": iblsController.userID.value,
-                              "owner_name": iblsController.userName.value
-                            });
-                            vehicleNumberController.clear();
-                            wrongInfo("Vehicle Added Successfully");
+                            try {
+                              await supabase.from("SearchData").insert({
+                                "vehicle_number": vhNum,
+                                "owner_uid": iblsController.userID.value,
+                                "owner_name": iblsController.userName.value
+                              }).then((value) async {
+                                await supabase.from("VehicleData").insert({
+                                  "vehicle_number": vhNum,
+                                  "owner_uid": iblsController.userID.value,
+                                  "owner_name": iblsController.userName.value,
+                                  "user_uid": iblsController.userID.value,
+                                  "user_name": iblsController.userName.value,
+                                  "validity": null
+                                });
+                              });
+                              vehicleNumberController.clear();
+                              wrongInfo("Vehicle Added Successfully");
+                            } on PostgrestException catch(e){
+                              vehicleNumberController.clear();
+                              wrongInfo("The vehicle is already registered!!");
+                            }
                           } else {
-                            wrongInfo("Enter Vehicle Number is not Valid");
+                            wrongInfo("Enter a valid vehicle number!!");
                           }
                         }),
                         child: Container(

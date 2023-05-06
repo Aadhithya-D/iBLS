@@ -20,12 +20,12 @@ class AuthPage extends StatelessWidget {
         builder: (context, snapshot) {
           // user is logged in
           if (snapshot.data?.event == AuthChangeEvent.signedIn) {
-            final currentUser = supabase.auth.currentUser;
-            if (currentUser != null) {
-              print(currentUser.id);
-              iBLSController().getUserData(currentUser.id);
-            }
-            return const HomeScreen();
+            // final currentUser = supabase.auth.currentUser;
+            // if (currentUser != null) {
+            //   print(currentUser.id);
+            //   iBLSController().getUserData(currentUser.id);
+            // }
+            return HomeScreen();
           }
           // user is NOT logged in
           else {
