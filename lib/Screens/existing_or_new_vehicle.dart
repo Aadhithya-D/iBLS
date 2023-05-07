@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ibls/components/register_new_vehicle_card.dart';
 import 'package:ibls/Screens/new_vehicle_screen.dart';
-import 'package:ibls/Screens/request_vehicle.dart';
+import 'package:ibls/Screens/request_vehicle_screen.dart';
 import 'package:ibls/variables.dart';
 import '../components/fonts.dart';
 
@@ -32,7 +32,7 @@ class ExistingOrNewScreen extends StatelessWidget {
               //searchbar
                GestureDetector(
                 onTap: (() {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>RequestExistingVehicleScreen()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>const RequestExistingVehicleScreen()));
                 }),
                  child:  Container(
                   height: 60,
@@ -76,7 +76,7 @@ class ExistingOrNewScreen extends StatelessWidget {
                           MaterialPageRoute(
                               builder: (context) => RegisterNewVehicleScreen()));
                     }),
-                    child: RegisterNewVehicleCard()),
+                    child: const RegisterNewVehicleCard()),
               ),
             ]),
           ),

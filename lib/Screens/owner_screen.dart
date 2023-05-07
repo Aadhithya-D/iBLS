@@ -3,7 +3,8 @@ import 'package:ibls/Screens/requests._screen.dart';
 import 'package:ibls/Screens/vehicle_details.dart';
 
 class OwnerScreen extends StatefulWidget {
-  const OwnerScreen({super.key});
+  final vehicleNumber;
+  const OwnerScreen({super.key, required this.vehicleNumber});
 
   @override
   State<OwnerScreen> createState() => _OwnerScreenState();
@@ -12,13 +13,6 @@ class OwnerScreen extends StatefulWidget {
 class _OwnerScreenState extends State<OwnerScreen> {
 
   int _currentIndex = 0;
-
-
-   final List <Widget>_pages=[
-    VehicleDetailsScreen(),
-    RequestsScreen()
-  ];
-
    void _onItemTapped(int index) {  
     setState(() {  
       _currentIndex = index;  
@@ -27,8 +21,11 @@ class _OwnerScreenState extends State<OwnerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final List <Widget>_pages=[
+      VehicleDetailsScreen(vehicleNumber: widget.vehicleNumber,),
+      const RequestsScreen()
+    ];
     return Scaffold(
-
       backgroundColor: Theme.of(context).colorScheme.background,
       bottomNavigationBar: BottomNavigationBar(
         items:  <BottomNavigationBarItem>[

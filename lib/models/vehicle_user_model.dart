@@ -1,3 +1,5 @@
+// List of users of that vehicle
+
 class VehicleUserModel {
   String vehicleNumber;
   String ownerUID;

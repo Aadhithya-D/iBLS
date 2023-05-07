@@ -9,7 +9,7 @@ class UserContainerVehicleDetails extends StatelessWidget {
   final userDuration;
 
   String real_duration(String temp){
-    String new_string;
+    String newString;
     if(temp=="Permanent"){
       return "Valid permanently";
     } else{

@@ -10,7 +10,8 @@ class iBLSController extends GetxController{
   var userEmail = "".obs;
   var userAge = 0.obs;
   var userVehicleList = <UserVehicleModel>[].obs;
-  var vehicleUserList = {}.obs;
+  var vehicleUserList = <String, List<VehicleUserModel>>{}.obs;
+  var justSignedOut = false.obs;
 
   @override
   void onInit() {
@@ -36,23 +37,26 @@ class iBLSController extends GetxController{
   }
 
   Future<void> getUserVehicleData(String uid) async {
+    userVehicleList.clear();
+    vehicleUserList.clear();
     var data = await supabase.from("VehicleData").select().eq("user_uid", uid).then((value) async {
       // List<Map<String, dynamic>> temp = value;
       print(value);
+      List<UserVehicleModel> temp = [];
       for(int i = 0; i < value.length; i++){
         UserVehicleModel t = UserVehicleModel.fromMapToObj(value[i]);
-        userVehicleList.add(t);
+        temp.add(t);
       }
-      for(int i = 0; i < userVehicleList.length; i++){
-        var data1 = await supabase.from("VehicleData").select().eq("vehicle_number", userVehicleList[i].vehicleNumber);
+      for(int i = 0; i < temp.length; i++){
+        var data1 = await supabase.from("VehicleData").select().eq("vehicle_number", temp[i].vehicleNumber);
         List<VehicleUserModel> tempList = [];
         for (int j = 0; j < data1.length; j++){
           VehicleUserModel t1 = VehicleUserModel.fromMapToObj(data1[j]);
           tempList.add(t1);
         }
-        vehicleUserList[userVehicleList[i].vehicleNumber] = tempList;
-
+        vehicleUserList[temp[i].vehicleNumber] = tempList;
       }
+      userVehicleList.addAll(temp);
       print(vehicleUserList);
     });
   }

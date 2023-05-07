@@ -1,7 +1,11 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:ibls/variables.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../controllers/ibls_controller.dart';
 
 class ProfileScreen extends StatelessWidget {
    ProfileScreen({super.key});
@@ -9,13 +13,14 @@ class ProfileScreen extends StatelessWidget {
   final double coverHeight = 200;
   final double photoHeight = 150;
    final supabase = Supabase.instance.client;
+   final iBLSController iblsController = Get.put(iBLSController());
   
 
   TextStyle profileFont(BuildContext context){
   return  TextStyle(
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w700,
     color: Theme.of(context).colorScheme.tertiary,
-    fontSize: 35,
+    fontSize: 30,
   );
 }
 
@@ -67,7 +72,9 @@ Widget top_part(BuildContext context)
   Widget build(BuildContext context) {
 
     Future<void> signUserOut() async {
-
+      iblsController.userVehicleList.clear();
+      iblsController.vehicleUserList.clear();
+      iblsController.justSignedOut.value = true;
       await supabase.auth.signOut();
 
       Navigator.pop(context);
@@ -88,7 +95,7 @@ Widget top_part(BuildContext context)
 
         actions: [
           IconButton(
-            onPressed: signUserOut, icon: Icon(
+            onPressed: signUserOut, icon: const Icon(
               Icons.logout,
               color: Colors.white,
             )
@@ -104,11 +111,12 @@ Widget top_part(BuildContext context)
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Adithya",style: profileFont(context),),
+              smallGap(),
+              Text(iblsController.userName.value,style: profileFont(context),),
 
-              largeGap(),
+              smallGap(),
 
-              Text("19 years",style: profileFont(context),)
+              Text("Age: ${iblsController.userAge.value.toString()}",style: profileFont(context),)
             ],  
           )
         ],

@@ -49,7 +49,7 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: Obx(() {
               return ListView(
                 children: <Widget>[
@@ -60,17 +60,18 @@ class HomeScreen extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         onTap: () {
+                          var vehicleNumber = iblsController.userVehicleList[index].vehicleNumber;
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => OwnerScreen()));
+                                  builder: (context) => OwnerScreen(vehicleNumber: vehicleNumber,)));
                         },
                         child: Column(
                           children: [
                             VehicleCard(
                                 vehicleNum: iblsController.userVehicleList[index].vehicleNumber,
-                                noOfUsers: iblsController.vehicleUserList[iblsController.userVehicleList[index].vehicleNumber].length,
-                                requests: true,
+                                noOfUsers: iblsController.vehicleUserList[iblsController.userVehicleList[index].vehicleNumber]?.length,
+                                requests: false,
                                 requestNum: 2),
                             const SizedBox(height: 15,)
                           ],
